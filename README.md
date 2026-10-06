@@ -1,5 +1,7 @@
 # EzSoundMixer
 
+<img src="media/icon.png" alt="EzSoundMixer icon" width="128">
+
 Sound volume sliders and presets for WoW Forever, without digging through the options menu.
 
 Inspired by Twitch streamer Payo and his Zenewin Zenehon and flute moments. PPC my little man
