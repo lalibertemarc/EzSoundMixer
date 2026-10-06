@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="70%">
+      <stop offset="0" stop-color="#1f6a78"/>
+      <stop offset="1" stop-color="#06161d"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#5ff0e0" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#5ff0e0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff0b0"/>
+      <stop offset="0.45" stop-color="#e5b94c"/>
+      <stop offset="1" stop-color="#8f5f17"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c2a33"/>
+      <stop offset="1" stop-color="#0b1217"/>
+    </linearGradient>
+    <linearGradient id="level" gradientUnits="userSpaceOnUse" x1="0" y1="288" x2="0" y2="118">
+      <stop offset="0" stop-color="#3ee88a"/>
+      <stop offset="0.6" stop-color="#f5e04a"/>
+      <stop offset="1" stop-color="#ff6a3d"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <g fill="none" stroke="#7ff5e6" stroke-linecap="round" opacity="0.3">
+    <path d="M60,140 Q40,200 60,260" stroke-width="10"/>
+    <path d="M32,115 Q2,200 32,285" stroke-width="8"/>
+    <path d="M340,140 Q360,200 340,260" stroke-width="10"/>
+    <path d="M368,115 Q398,200 368,285" stroke-width="8"/>
+  </g>
+  <circle cx="200" cy="205" r="175" fill="url(#glow)"/>
+  <rect x="85" y="78" width="230" height="250" rx="26" fill="url(#gold)" stroke="#3a2306" stroke-width="5"/>
+  <rect x="100" y="93" width="200" height="220" rx="16" fill="url(#panel)" stroke="#2a1a05" stroke-width="3"/>
+  <!-- tick marks -->
+  <g stroke="#4c6470" stroke-width="3" stroke-linecap="round">
+    <path d="M117,125 h10 M117,155 h10 M117,185 h10 M117,215 h10 M117,245 h10 M117,275 h10"/>
+    <path d="M273,125 h10 M273,155 h10 M273,185 h10 M273,215 h10 M273,245 h10 M273,275 h10"/>
+  </g>
+  <!-- tracks -->
+  <g stroke-linecap="round">
+    <path d="M150,118 V288 M200,118 V288 M250,118 V288" stroke="#03080b" stroke-width="16"/>
+    <path d="M150,232 V288" stroke="url(#level)" stroke-width="10"/>
+    <path d="M200,148 V288" stroke="url(#level)" stroke-width="10"/>
+    <path d="M250,192 V288" stroke="url(#level)" stroke-width="10"/>
+  </g>
+  <!-- fader knobs -->
+  <g stroke="#3a2306" stroke-width="4">
+    <rect x="124" y="216" width="52" height="32" rx="7" fill="url(#gold)"/>
+    <rect x="174" y="132" width="52" height="32" rx="7" fill="url(#gold)"/>
+    <rect x="224" y="176" width="52" height="32" rx="7" fill="url(#gold)"/>
+  </g>
+  <g stroke="#3a2306" stroke-width="4" stroke-linecap="round">
+    <path d="M134,232 h32 M184,148 h32 M234,192 h32"/>
+  </g>
+  <!-- music notes -->
+  <g fill="#fff6d0">
+    <path d="M322,46 v38 a10,8 -20 1 1 -6,-7 v-24 l28,-7 v30 a10,8 -20 1 1 -6,-7 v-18 l-16,4 z"/>
+    <path d="M70,330 v28 a9,7 -20 1 1 -6,-6 v-30 l18,8 v6 z"/>
+  </g>
+</svg>
