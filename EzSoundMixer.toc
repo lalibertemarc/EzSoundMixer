@@ -6,6 +6,7 @@
 ## IconTexture: Interface\Icons\INV_Misc_Drum_01
 ## AddonCompartmentFunc: EzSoundMixer_Toggle
 ## SavedVariables: EzSoundMixerDB
+## X-Curse-Project-ID: 1730562
 
 Data.lua
 Core.lua
