@@ -1,5 +1,9 @@
 # EzSoundMixer
 
+## v1.1.0
+
+- New default preset: Mute turns off all sound (Master off). Handy as a macro: `/ezsm Mute`.
+
 ## v1.0.0
 
 - First release for WoW Forever.

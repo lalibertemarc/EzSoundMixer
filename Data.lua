@@ -17,6 +17,8 @@ ns.DEFAULT_PRESETS = {
     ["Music focus"]   = { 100, 100, 30, 40, 60, on = ALL_ON },
     ["Effects focus"] = { 100, 20, 100, 60, 100, on = ALL_ON },
     ["Quiet"]         = { 30, 30, 30, 30, 30, on = ALL_ON },
+    -- Only the Master toggle goes off, so any other preset brings sound straight back.
+    ["Mute"]          = { 100, 100, 100, 100, 100, on = ALL_ON - 1 },
     -- Like EzFishing's session: effects at full so the bobber splash stands out, everything else off.
     ["Fishing"]       = { 100, 50, 100, 50, 100, on = 1 + 4 }, -- only Master and Effects on
 }
