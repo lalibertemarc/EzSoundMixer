@@ -17,9 +17,9 @@ read_globals = {
     "strtrim", "tinsert",
     -- Frames & UI
     "CreateFrame", "UIParent", "DEFAULT_CHAT_FRAME", "GameFontHighlight", "GameTooltip",
-    "Minimap", "GetCursorPosition", "MenuUtil",
+    "Minimap", "GetCursorPosition",
     "HIGHLIGHT_FONT_COLOR", "GRAY_FONT_COLOR",
-    "MinimalSliderWithSteppersMixin", "MenuResponse", "FormatPercentage",
+    "MinimalSliderWithSteppersMixin", "FormatPercentage",
     "StaticPopup_Show",
     -- Global strings
     "MASTER_VOLUME", "MUSIC_VOLUME", "FX_VOLUME", "AMBIENCE_VOLUME", "DIALOG_VOLUME",

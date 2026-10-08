@@ -78,7 +78,7 @@ end
 local function SetSelected(name)
     selected = name
     if frame then
-        frame.dropdown:GenerateMenu()
+        frame.presets:SetText(name or "Presets")
         frame.delete:SetEnabled(name ~= nil)
     end
 end
@@ -131,6 +131,83 @@ local function DeletePreset(name)
 end
 
 ---------------------------------------------------------------------------
+-- Preset list: a popup of our own rather than Blizzard's menu system, which
+-- crashes the client when an addon opens a menu in combat.
+---------------------------------------------------------------------------
+local list        -- built the first time it's opened
+local listRows = {}
+local ROW_HEIGHT, CHECK_WIDTH = 18, 18
+
+local function ListRow(i)
+    if listRows[i] then return listRows[i] end
+    local row = CreateFrame("Button", nil, list)
+    row:SetHeight(ROW_HEIGHT)
+    row:SetPoint("TOPLEFT", 10, -8 - (i - 1) * ROW_HEIGHT)
+    row:SetPoint("RIGHT", -10, 0)
+    row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+    row.check = row:CreateTexture(nil, "ARTWORK")
+    row.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+    row.check:SetSize(16, 16)
+    row.check:SetPoint("LEFT")
+    row.text = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    row.text:SetPoint("LEFT", CHECK_WIDTH, 0)
+    row:SetScript("OnClick", function(self)
+        list:Hide()
+        ApplyPreset(self.name)
+    end)
+    listRows[i] = row
+    return row
+end
+
+local function FillList()
+    local names = PresetNames()
+    local count, width = math.max(#names, 1), 0
+    for i = 1, count do
+        local row, name = ListRow(i), names[i]
+        row.name = name
+        row.text:SetText(name or "No presets saved")
+        row.text:SetTextColor((name and HIGHLIGHT_FONT_COLOR or GRAY_FONT_COLOR):GetRGB())
+        row.check:SetShown(name ~= nil and name == selected)
+        row:SetEnabled(name ~= nil)
+        row:Show()
+        width = math.max(width, row.text:GetStringWidth())
+    end
+    for i = count + 1, #listRows do listRows[i]:Hide() end
+    list:SetSize(width + CHECK_WIDTH + 24, count * ROW_HEIGHT + 16)
+end
+
+local function BuildList()
+    list = CreateFrame("Frame", "EzSoundMixerPresetList", UIParent, "TooltipBackdropTemplate")
+    list:Hide()
+    list:SetFrameStrata("FULLSCREEN_DIALOG")
+    list:SetClampedToScreen(true)
+    list:EnableMouse(true)
+    tinsert(UISpecialFrames, list:GetName()) -- Esc closes it
+
+    -- A click anywhere else closes it; only listen while it's open.
+    list:SetScript("OnShow", function(self) self:RegisterEvent("GLOBAL_MOUSE_DOWN") end)
+    list:SetScript("OnHide", function(self) self:UnregisterEvent("GLOBAL_MOUSE_DOWN") end)
+    list:SetScript("OnEvent", function(self)
+        -- Clicks on the owner are left to its OnClick, which toggles the list.
+        if not (self:IsMouseOver() or self.owner:IsMouseOver()) then self:Hide() end
+    end)
+end
+
+-- Opens the list with its `point` on the owner's `relPoint`, or closes it if the owner already has it open.
+local function ToggleList(owner, point, relPoint)
+    if list and list:IsShown() and list.owner == owner then
+        list:Hide()
+        return
+    end
+    if not list then BuildList() end
+    list.owner = owner
+    FillList()
+    list:ClearAllPoints()
+    list:SetPoint(point, owner, relPoint)
+    list:Show()
+end
+
+---------------------------------------------------------------------------
 -- UI (built lazily)
 ---------------------------------------------------------------------------
 local function Dialog(which, t)
@@ -177,20 +254,6 @@ local function CreateDialogs()
     Confirm("EZSOUNDMIXER_DELETE", 'Delete preset "%s"?', DELETE, DeletePreset)
 end
 
-local function IsSelected(name) return name == selected end
-local function Select(name)
-    ApplyPreset(name)
-    return MenuResponse.CloseAll
-end
-
-local function PresetMenu(_, root)
-    local names = PresetNames()
-    for _, name in ipairs(names) do
-        root:CreateRadio(name, IsSelected, Select, name)
-    end
-    if #names == 0 then root:CreateTitle("No presets saved") end
-end
-
 local function Button(text, onClick)
     local b = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     b:SetSize(72, 22)
@@ -227,9 +290,14 @@ local function Build()
         events:RegisterEvent("CVAR_UPDATE")
         Refresh()
     end)
-    frame:SetScript("OnHide", function() events:UnregisterEvent("CVAR_UPDATE") end)
+    frame:SetScript("OnHide", function()
+        events:UnregisterEvent("CVAR_UPDATE")
+        if list and list.owner == frame.presets then list:Hide() end
+    end)
 
-    CreateFrame("Button", nil, frame, "UIPanelCloseButtonDefaultAnchors")
+    -- The template's own OnClick goes through HideUIPanel, which is blocked in combat.
+    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButtonDefaultAnchors")
+    close:SetScript("OnClick", function() frame:Hide() end)
 
     local formatters = {
         [MinimalSliderWithSteppersMixin.Label.Right] = function(v) return FormatPercentage(v, true) end,
@@ -266,11 +334,13 @@ local function Build()
     local save = Button(SAVE, function() StaticPopup_Show("EZSOUNDMIXER_SAVE") end)
     save:SetPoint("RIGHT", frame.delete, "LEFT", -6, 0)
 
-    frame.dropdown = CreateFrame("DropdownButton", nil, frame, "WowStyle1DropdownTemplate")
-    frame.dropdown:SetPoint("BOTTOMLEFT", 16, 14)
-    frame.dropdown:SetPoint("RIGHT", save, "LEFT", -10, 0)
-    frame.dropdown:SetDefaultText("Presets")
-    frame.dropdown:SetupMenu(PresetMenu)
+    frame.presets = Button("Presets", function(self) ToggleList(self, "TOPLEFT", "BOTTOMLEFT") end)
+    frame.presets:SetPoint("BOTTOMLEFT", 16, 14)
+    frame.presets:SetPoint("RIGHT", save, "LEFT", -10, 0)
+    local label = frame.presets:GetFontString() -- long preset names get cut with "..."
+    label:SetPoint("LEFT", 8, 0)
+    label:SetPoint("RIGHT", -8, 0)
+    label:SetWordWrap(false)
 
     CreateDialogs()
     SetSelected(selected)
@@ -318,7 +388,7 @@ local function CreateMinimapButton()
     minimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     minimapButton:SetScript("OnClick", function(self, button)
         if button == "RightButton" then
-            MenuUtil.CreateContextMenu(self, PresetMenu)
+            ToggleList(self, "TOPRIGHT", "BOTTOMLEFT")
         else
             EzSoundMixer_Toggle()
         end

@@ -1,5 +1,10 @@
 # EzSoundMixer
 
+## v1.1.1
+
+- Fix a game crash when opening the presets list in combat (right-clicking the minimap button). The presets list is now EzSoundMixer's own popup instead of the game's menus, so it works in combat.
+- Fix the panel's close (X) button doing nothing in combat.
+
 ## v1.1.0
 
 - New default preset: Mute turns off all sound (Master off). Handy as a macro: `/ezsm Mute`.
