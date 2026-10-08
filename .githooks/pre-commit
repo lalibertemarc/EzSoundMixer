@@ -1,0 +1,18 @@
+#!/bin/sh
+# Lint staged Lua with luacheck before committing. CI runs the same check on push.
+# Bypass in an emergency with: git commit --no-verify
+
+if ! git diff --cached --name-only --diff-filter=ACMR | grep -q '\.lua$\|\.luacheckrc$'; then
+    exit 0
+fi
+
+if ! command -v luacheck >/dev/null 2>&1; then
+    echo "pre-commit: luacheck not found on PATH (install: scoop install luacheck)" >&2
+    exit 1
+fi
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+luacheck . --no-color -q || {
+    echo "pre-commit: luacheck failed - fix the warnings above before committing." >&2
+    exit 1
+}
