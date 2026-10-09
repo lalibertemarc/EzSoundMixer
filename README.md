@@ -9,7 +9,7 @@ Inspired by Twitch streamer Payo and his Zenewin Zenehon and flute moments. PPC 
 ## Usage
 
 - Click the minimap button (or use the addon menu on the minimap, or type `/ezsm`) to open the panel.
-- Right-click the minimap button to switch presets without opening the panel. Drag it to move it around the minimap; `/ezsm minimap` hides or shows it.
+- Right-click the minimap button, or EzSoundMixer in the addon menu, to switch presets without opening the panel. Drag the button to move it around the minimap. Shift-click it to hide it; the "Show minimap button" checkbox in the panel (or `/ezsm minimap`) brings it back.
 - Drag the sliders or tick the checkboxes; changes apply immediately and match the game's Audio options.
 - **Save** stores the current volumes as a named preset. Pick presets with the **Presets** button; **Delete** removes the selected one.
 - `/ezsm <preset name>` applies a preset directly, e.g. a macro with `/ezsm Quiet`.

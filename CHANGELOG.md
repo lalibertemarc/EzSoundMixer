@@ -1,5 +1,10 @@
 # EzSoundMixer
 
+## v1.2.0
+
+- Right-click EzSoundMixer in the addon menu on the minimap to pick a preset, same as right-clicking the minimap button, so presets stay handy with the button hidden.
+- Hide the minimap button with Shift-click, or with the new "Show minimap button" checkbox in the mixer panel. `/ezsm minimap` still works too.
+
 ## v1.1.1
 
 - Fix a game crash when opening the presets list in combat (right-clicking the minimap button). The presets list is now EzSoundMixer's own popup instead of the game's menus, so it works in combat.

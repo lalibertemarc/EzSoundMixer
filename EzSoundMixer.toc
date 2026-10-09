@@ -4,7 +4,9 @@
 ## Author: Marc
 ## Version: @project-version@
 ## IconTexture: Interface\Icons\INV_Misc_Drum_01
-## AddonCompartmentFunc: EzSoundMixer_Toggle
+## AddonCompartmentFunc: EzSoundMixer_OnCompartmentClick
+## AddonCompartmentFuncOnEnter: EzSoundMixer_OnCompartmentEnter
+## AddonCompartmentFuncOnLeave: EzSoundMixer_OnCompartmentLeave
 ## SavedVariables: EzSoundMixerDB
 ## X-Curse-Project-ID: 1730562
 

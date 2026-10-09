@@ -10,6 +10,7 @@ local frame       -- the mixer panel; built the first time it's opened
 local rows = {}
 local selected    -- name of the preset the current volumes match, or nil
 local refreshing  -- true while widgets are synced from CVars, so they don't write back
+local SetMinimapHidden -- defined with the minimap button, used by the panel
 local events = CreateFrame("Frame")
 
 local function Print(msg)
@@ -102,6 +103,7 @@ local function Refresh()
         row.slider:SetValue(Volume(row.ch))
         row.slider:SetEnabled(active and on)
     end
+    frame.minimap:SetChecked(not db.minimapHidden)
     refreshing = false
     CheckSelected()
 end
@@ -271,7 +273,7 @@ end
 local function Build()
     frame = CreateFrame("Frame", "EzSoundMixerFrame", UIParent, "DefaultPanelFlatTemplate")
     frame:Hide()
-    frame:SetSize(370, 236)
+    frame:SetSize(370, 268)
     frame:SetTitle("Sound Mixer")
     frame:SetFrameStrata("DIALOG")
     frame:SetToplevel(true)
@@ -326,6 +328,13 @@ local function Build()
         rows[i] = { ch = ch, check = check, slider = slider }
     end
 
+    frame.minimap = CreateFrame("CheckButton", nil, frame, "UICheckButtonTemplate")
+    frame.minimap:SetSize(26, 26)
+    frame.minimap:SetPoint("TOPLEFT", 14, -32 - #CHANNELS * 32)
+    frame.minimap.Text:SetFontObject(GameFontHighlight)
+    frame.minimap.Text:SetText("Show minimap button")
+    frame.minimap:SetScript("OnClick", function(self) SetMinimapHidden(not self:GetChecked()) end)
+
     frame.delete = Button(DELETE, function()
         if selected then StaticPopup_Show("EZSOUNDMIXER_DELETE", selected, nil, selected) end
     end)
@@ -347,7 +356,8 @@ local function Build()
 end
 
 ---------------------------------------------------------------------------
--- Minimap button: left-click opens the mixer, right-click lists presets, drag to move
+-- Minimap button: left-click opens the mixer, right-click lists presets, shift-click hides it,
+-- drag to move
 ---------------------------------------------------------------------------
 local minimapButton
 
@@ -389,6 +399,8 @@ local function CreateMinimapButton()
     minimapButton:SetScript("OnClick", function(self, button)
         if button == "RightButton" then
             ToggleList(self, "TOPRIGHT", "BOTTOMLEFT")
+        elseif IsShiftKeyDown() then
+            SetMinimapHidden(true)
         else
             EzSoundMixer_Toggle()
         end
@@ -408,6 +420,7 @@ local function CreateMinimapButton()
         GameTooltip:AddLine("Left-click: open the mixer", 1, 1, 1)
         GameTooltip:AddLine("Right-click: presets", 1, 1, 1)
         GameTooltip:AddLine("Drag: move this button", 1, 1, 1)
+        GameTooltip:AddLine("Shift-click: hide this button", 1, 1, 1)
         GameTooltip:Show()
     end)
     minimapButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -419,6 +432,14 @@ end
 local function UpdateMinimapButton()
     if not db.minimapHidden and not minimapButton then CreateMinimapButton() end
     if minimapButton then minimapButton:SetShown(not db.minimapHidden) end
+end
+
+function SetMinimapHidden(hidden)
+    db.minimapHidden = hidden
+    UpdateMinimapButton()
+    if hidden and (list and list.owner == minimapButton) then list:Hide() end
+    Refresh()
+    Print(hidden and "Minimap button hidden. Bring it back from the mixer panel or with /ezsm minimap." or "Minimap button shown.")
 end
 
 ---------------------------------------------------------------------------
@@ -451,18 +472,35 @@ function EzSoundMixer_Toggle()
     frame:SetShown(not frame:IsShown())
 end
 
+-- Addon drawer on the minimap (AddonCompartmentFunc): same clicks as the minimap button,
+-- so presets stay one click away with the button hidden.
+function EzSoundMixer_OnCompartmentClick(_, button)
+    if button == "RightButton" then
+        ToggleList(AddonCompartmentFrame, "TOPRIGHT", "BOTTOMLEFT")
+    else
+        EzSoundMixer_Toggle()
+    end
+end
+
+function EzSoundMixer_OnCompartmentEnter(_, row)
+    GameTooltip:SetOwner(row, "ANCHOR_LEFT")
+    GameTooltip:AddLine(addonName)
+    GameTooltip:AddLine("Left-click: open the mixer", 1, 1, 1)
+    GameTooltip:AddLine("Right-click: presets", 1, 1, 1)
+    GameTooltip:Show()
+end
+
+function EzSoundMixer_OnCompartmentLeave()
+    GameTooltip:Hide()
+end
+
 SLASH_EZSOUNDMIXER1 = "/ezsm"
 SLASH_EZSOUNDMIXER2 = "/ezsoundmixer"
 SlashCmdList.EZSOUNDMIXER = function(msg)
     msg = strtrim(msg or "")
     if msg == "" then return EzSoundMixer_Toggle() end
     local want = msg:lower()
-    if want == "minimap" then
-        db.minimapHidden = not db.minimapHidden
-        UpdateMinimapButton()
-        Print(db.minimapHidden and "Minimap button hidden. /ezsm minimap brings it back." or "Minimap button shown.")
-        return
-    end
+    if want == "minimap" then return SetMinimapHidden(not db.minimapHidden) end
     for _, name in ipairs(PresetNames()) do
         if name:lower() == want then
             ApplyPreset(name)

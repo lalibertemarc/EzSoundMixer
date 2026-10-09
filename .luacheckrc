@@ -5,6 +5,9 @@ self = false
 globals = {
     "EzSoundMixerDB",
     "EzSoundMixer_Toggle",
+    "EzSoundMixer_OnCompartmentClick",
+    "EzSoundMixer_OnCompartmentEnter",
+    "EzSoundMixer_OnCompartmentLeave",
     "SLASH_EZSOUNDMIXER1",
     "SLASH_EZSOUNDMIXER2",
     "SlashCmdList",
@@ -17,7 +20,7 @@ read_globals = {
     "strtrim", "tinsert",
     -- Frames & UI
     "CreateFrame", "UIParent", "DEFAULT_CHAT_FRAME", "GameFontHighlight", "GameTooltip",
-    "Minimap", "GetCursorPosition",
+    "Minimap", "GetCursorPosition", "AddonCompartmentFrame", "IsShiftKeyDown",
     "HIGHLIGHT_FONT_COLOR", "GRAY_FONT_COLOR",
     "MinimalSliderWithSteppersMixin", "FormatPercentage",
     "StaticPopup_Show",
