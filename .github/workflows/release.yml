@@ -17,8 +17,17 @@ jobs:
       WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
       WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
       GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+      # Discord #announcements webhook; the Announce step is skipped while it's unset.
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      # Optional: id of this addon's "<Addon> updates" role, pinged on release.
+      DISCORD_ROLE: ${{ vars.DISCORD_ROLE }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: BigWigsMods/packager@v2
+      - name: Announce on Discord
+        if: env.DISCORD_WEBHOOK != ''
+        # A failed post shouldn't mark a release that already went out as failed.
+        continue-on-error: true
+        run: python3 .github/announce.py "$GITHUB_REF_NAME"
