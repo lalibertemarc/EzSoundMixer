@@ -1,5 +1,9 @@
 # EzSoundMixer
 
+## v1.2.1
+
+- Listed under **Audio & Video** in the game's AddOns list.
+
 ## v1.2.0
 
 - Right-click EzSoundMixer in the addon menu on the minimap to pick a preset, same as right-clicking the minimap button, so presets stay handy with the button hidden.
