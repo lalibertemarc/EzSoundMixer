@@ -3,6 +3,7 @@
 ## Notes: Sound volume sliders and presets, one click away.
 ## Author: Marc
 ## Version: @project-version@
+## Category: Audio & Video
 ## IconTexture: Interface\Icons\INV_Misc_Drum_01
 ## AddonCompartmentFunc: EzSoundMixer_OnCompartmentClick
 ## AddonCompartmentFuncOnEnter: EzSoundMixer_OnCompartmentEnter
